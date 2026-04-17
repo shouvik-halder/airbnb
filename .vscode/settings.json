@@ -1,0 +1,34 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3307,
+            "driver": "MySQL",
+            "name": "booking-service-mysql-container",
+            "database": "bookingservicedb",
+            "username": "user",
+            "askForPassword": true
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "hotel-service-mysql-container",
+            "database": "hotelservicedb",
+            "username": "user",
+            "askForPassword": true
+        }
+    ]
+}
