@@ -24,5 +24,13 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7
+    container_name: booking-service-redis-container
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+
 volumes:
   mysql_data:
