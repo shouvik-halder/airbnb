@@ -5,6 +5,8 @@ import { getRedisClient } from "../config/redis.config";
 import logger from "../config/logger.config";
 import { SEND_EMAIL_PAYLOAD } from "../producers/mailer.producer";
 import { BadRequestError } from "../utils/errors/app.error";
+import { renderMailerTemplates } from "../templates/template.handlers";
+import { MailerService } from "../services/mailer.service";
 
 
 export const setupEmailWorker = () =>{
@@ -16,6 +18,13 @@ export const setupEmailWorker = () =>{
                 logger.error(`Unknown job type ${job.name}`);
                 throw new BadRequestError(`Unknown job type ${job.name}`);
             }
+
+            const payload = job.data;
+            logger.info(`Processing email template`);
+
+            const emailContent = await renderMailerTemplates(payload.templateId, payload.data);
+
+            await MailerService(payload.to, payload.subject, emailContent);
     
         },
         {

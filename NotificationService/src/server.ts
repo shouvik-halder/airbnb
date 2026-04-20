@@ -6,6 +6,7 @@ import { genericErrorMiddleware as genericErrorHandler } from "./middlewares/err
 import logger from "./config/logger.config";
 import { attachCorrelationId } from "./middlewares/correlationid.middleware";
 import { setupEmailWorker } from "./workers/mailer.worker";
+// import { addEmailToQueue } from "./producers/mailer.producer";
 
 const app = express();
 
@@ -22,4 +23,16 @@ app.listen(serverConfig.PORT, ()=>{
     logger.info(`Server is running on port ${serverConfig.PORT}`);
 
     setupEmailWorker();
+    logger.info(`Email processor setup completed`);
+
+    // addEmailToQueue({
+    //     to: "shouvik2707@gmail.com",
+    //     subject:"Welcome to Airbnb",
+    //     templateId:"welcome",
+    //     data:{
+    //         name:"Shouvik Halder",
+    //         appName:"Airbnb.com"
+    //     }
+    // })
+
 });
