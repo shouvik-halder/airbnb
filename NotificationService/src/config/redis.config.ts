@@ -1,11 +1,5 @@
-import IORedis, { Redis } from "ioredis";
-import Redlock from "redlock";
+import { Redis } from "ioredis";
 import { redisConfig } from ".";
-
-
-export const redisClient = new IORedis(redisConfig.REDIS_URL, {
-  maxRetriesPerRequest:null
-});
 
 function connectToRedis() {
   try {
@@ -28,9 +22,3 @@ function connectToRedis() {
 
 export const getRedisClient = connectToRedis();
 
-export const redLock = new Redlock([getRedisClient() as any], {
-  driftFactor: 0.01,
-  retryCount: 10,
-  retryDelay: 200,
-  retryJitter: 200,
-});

@@ -30,7 +30,7 @@ export async function CreateBookingService(BookingData: CreateBookingDTO) {
       idempotencyKey,
     };
   } catch (error) {
-    throw new BadRequestError("Could not acquire lock, please try again");
+    throw new BadRequestError((error as Error).message);
   }
 }
 
