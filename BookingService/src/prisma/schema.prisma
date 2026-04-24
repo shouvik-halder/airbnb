@@ -11,6 +11,7 @@ model Booking {
   id                Int           @id @default(autoincrement())
   userId            Int
   hotelId           Int
+  roomTypeId        Int           
   bookingPrice      Float
   bookingStatus     BookingStatus @default(PENDING)
   totalGuests       Int
@@ -28,6 +29,7 @@ model IdempotencyKey{
   booking       Booking? @relation(fields: [bookingId], references: [id])
   finalized     Boolean  @default(false)
 }
+
 
 enum BookingStatus {
   PENDING
