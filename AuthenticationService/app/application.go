@@ -6,24 +6,34 @@ import (
 	"time"
 )
 
-
-type Application struct {
-	Config Config
-}
-
 type Config struct {
 	Addr string // PORT
 }
+func NewConfig(addr string) *Config {
+	return  &Config{
+		Addr: addr,
+	}
+}
+type Application struct {
+	Config *Config
+}
 
-func (app *Application) Run() error{
+func NewApplication(cfg *Config) *Application {
+	return  &Application{
+		Config: cfg,
+	}
+}
+
+
+func (app *Application) Run() error {
 	server := &http.Server{
-		Addr: app.Config.Addr,
-		Handler: nil, //TODO: Setup a chi router and put it here
-		// ReadTimeout: ##* time.Second,
-		// WriteTimeout: ##* time.Second,
+		Addr:         app.Config.Addr,
+		Handler:      nil, //TODO: Setup a chi router and put it here
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	fmt.Println("Starting server on Port ", server.Addr)
 
-	return  server.ListenAndServe()
+	return server.ListenAndServe()
 }
