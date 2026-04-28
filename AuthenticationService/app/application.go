@@ -2,6 +2,11 @@ package app
 
 import (
 	"AuthenticationService/config"
+	"AuthenticationService/controllers"
+	db "AuthenticationService/db/repositories"
+	"AuthenticationService/router"
+	// v1router "AuthenticationService/router/v1"
+	"AuthenticationService/services"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,20 +14,25 @@ import (
 
 type Application struct {
 	Config *config.Config
+	Store  *db.Storage
 }
 
 func NewApplication() *Application {
-	cfg:= config.Load()
 	return &Application{
-		Config: cfg,
+		Config: config.Load(),
+		Store:  db.InitStorage(),
 	}
 }
 
-
 func (app *Application) Run() error {
+
+	ur:= db.NewUserRepository();
+	us:=services.NewUserService(ur);
+	uc:= controllers.NewUserController(us);
+	uRouter:=router.NewUserRouter(uc);
 	server := &http.Server{
 		Addr:         app.Config.Server.PORT,
-		Handler:      nil, //TODO: Setup a chi router and put it here
+		Handler:      router.InitializeRouter(uRouter),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
