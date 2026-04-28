@@ -2,9 +2,8 @@ package main
 
 import "AuthenticationService/app"
 
-func main(){
-	cfg:= app.NewConfig(":####");
-	application := app.NewApplication(cfg)
+func main() {
+	application := app.NewApplication()
 
 	application.Run()
 }
