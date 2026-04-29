@@ -2,9 +2,11 @@ package app
 
 import (
 	"AuthenticationService/config"
+	dbconfig "AuthenticationService/config/db"
 	"AuthenticationService/controllers"
 	db "AuthenticationService/db/repositories"
 	"AuthenticationService/router"
+
 	// v1router "AuthenticationService/router/v1"
 	"AuthenticationService/services"
 	"fmt"
@@ -18,8 +20,10 @@ type Application struct {
 }
 
 func NewApplication() *Application {
+	cfg:=config.Load()
+	dbconfig.SetupDB(cfg)
 	return &Application{
-		Config: config.Load(),
+		Config: cfg,
 		Store:  db.InitStorage(),
 	}
 }
