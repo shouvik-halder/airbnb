@@ -1,9 +1,14 @@
 package main
 
-import "AuthenticationService/app"
+import (
+	"AuthenticationService/app"
+	"log"
+)
 
 func main() {
 	application := app.NewApplication()
 
-	application.Run()
+	if err := application.Run(); err != nil {
+		log.Fatal(err)
+	}
 }

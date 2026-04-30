@@ -16,9 +16,14 @@ type dbConfig struct {
 	DBNET  string
 }
 
+type authConfig struct {
+	TokenSecret string
+}
+
 type Config struct {
 	Server serverConfig
 	DB     dbConfig
+	Auth   authConfig
 }
 
 func Load() *Config {
@@ -32,6 +37,9 @@ func Load() *Config {
 			DBADDR: env.GetString("DBADDR", ""),
 			DBNAME: env.GetString("DBNAME", ""),
 			DBNET:  env.GetString("DBNET", "tcp"),
+		},
+		Auth: authConfig{
+			TokenSecret: env.GetString("AUTH_TOKEN_SECRET", "dev-auth-token-secret-change-me"),
 		},
 	}
 }

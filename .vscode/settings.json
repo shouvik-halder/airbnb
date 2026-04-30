@@ -29,6 +29,21 @@
             "database": "hotelservicedb",
             "username": "user",
             "askForPassword": true
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3308,
+            "driver": "MySQL",
+            "name": "authentication-service-mysql-container",
+            "database": "authenticationservicedb",
+            "username": "user",
+            "askForPassword": true
         }
     ]
 }
