@@ -8,8 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-
-
 func InitializeRouter(router ...routerhelper.Router) *chi.Mux {
 	chiRouter := chi.NewRouter()
 

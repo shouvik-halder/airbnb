@@ -28,6 +28,7 @@ type UserService interface {
 	Register(email, password string) (*AuthResponse, error)
 	Login(email, password string) (*AuthResponse, error)
 	GetUserByIdService(id int64) (*model.User, error)
+	DeleteUserByIdService(id int64) (bool, error)
 }
 
 type AuthResponse struct {
@@ -45,7 +46,6 @@ func (userService *userServiceImpl) Register(email, password string) (*AuthRespo
 	if email == "" || !strings.Contains(email, "@") || len(password) < 8 {
 		return nil, ErrInvalidInput
 	}
-
 	_, err := userService.userRepository.GetByEmail(email)
 	if err == nil {
 		return nil, ErrEmailAlreadyInUse
@@ -99,6 +99,19 @@ func (userService *userServiceImpl) GetUserByIdService(id int64) (*model.User, e
 	}
 
 	return user, nil
+}
+
+func (userService *userServiceImpl) DeleteUserByIdService(id int64) (bool, error) {
+	isDeleted, err := userService.userRepository.Delete(id)
+	if err != nil {
+		return false, err
+	}
+
+	if !isDeleted {
+		return false, ErrUserNotFound
+	}
+
+	return true, nil
 }
 
 func (userService *userServiceImpl) buildAuthResponse(user *model.User) (*AuthResponse, error) {

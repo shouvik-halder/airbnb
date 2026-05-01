@@ -9,6 +9,7 @@ type UserRepository interface {
 	GetById(id int64) (*model.User, error)
 	GetByEmail(email string) (*model.User, error)
 	Create(email, hashedPass string) (*model.User, error)
+	Delete(id int64) (bool, error)
 }
 
 type UserRepositoryImpl struct {
@@ -21,7 +22,7 @@ func NewUserRepository(_sqlDB *sql.DB) UserRepository {
 	}
 }
 func (u *UserRepositoryImpl) GetById(id int64) (*model.User, error) {
-	query := `SELECT id, email, password_hash, created_at, updated_at FROM users WHERE id = ?`
+	query := `SELECT id, email, password_hash, created_at, updated_at FROM user WHERE id = ? AND deleted_at IS NULL`
 	row := u.sqlDB.QueryRow(query, id)
 
 	user := &model.User{}
@@ -35,7 +36,7 @@ func (u *UserRepositoryImpl) GetById(id int64) (*model.User, error) {
 }
 
 func (u *UserRepositoryImpl) GetByEmail(email string) (*model.User, error) {
-	query := `SELECT id, email, password_hash, created_at, updated_at FROM users WHERE email = ?`
+	query := `SELECT id, email, password_hash, created_at, updated_at FROM user WHERE email = ? AND deleted_at IS NULL`
 	row := u.sqlDB.QueryRow(query, email)
 
 	user := &model.User{}
@@ -49,7 +50,7 @@ func (u *UserRepositoryImpl) GetByEmail(email string) (*model.User, error) {
 }
 
 func (u *UserRepositoryImpl) Create(email, hashedPass string) (*model.User, error) {
-	query := `INSERT INTO users(email, password_hash) values (?, ?)`
+	query := `INSERT INTO user (email, password_hash) values (?, ?)`
 	result, err := u.sqlDB.Exec(query, email, hashedPass)
 	if err != nil {
 		return nil, err
@@ -63,6 +64,20 @@ func (u *UserRepositoryImpl) Create(email, hashedPass string) (*model.User, erro
 	return u.GetById(id)
 }
 
+func (u *UserRepositoryImpl) Delete(id int64) (bool, error) {
+	query := `UPDATE user SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL`
+	result, err := u.sqlDB.Exec(query, id)
+	if err != nil {
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	return rowsAffected > 0, nil
+}
 func IsNotFound(err error) bool {
 	return err == sql.ErrNoRows
 }

@@ -92,6 +92,26 @@ func (uc *UserController) GetUserByIdController(w http.ResponseWriter, r *http.R
 	writeJSON(w, http.StatusOK, user)
 }
 
+func (uc *UserController) DeleteUserByIdController(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil || id <= 0 {
+		writeError(w, http.StatusBadRequest, "invalid user id")
+		return
+	}
+
+	_, err = uc.userService.DeleteUserByIdService(id)
+	if err != nil {
+		if errors.Is(err, services.ErrUserNotFound) {
+			writeError(w, http.StatusNotFound, err.Error())
+			return
+		}
+		writeError(w, http.StatusInternalServerError, "failed to delete user")
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func writeJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)

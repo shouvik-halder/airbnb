@@ -17,10 +17,11 @@ func NewUserRouter(_userController *controllers.UserController) *UserRouter {
 }
 
 func (userRouter *UserRouter) Register(r chi.Router) {
-	r.Route("/auth", func(r chi.Router) {
+	r.Route("/user", func(r chi.Router) {
 		r.Post("/register", userRouter.userController.RegisterController)
 		r.Post("/login", userRouter.userController.LoginController)
+		r.Get("/{id}", userRouter.userController.GetUserByIdController)
+		r.Post("/delete/{id}", userRouter.userController.DeleteUserByIdController)
 	})
 
-	r.Get("/users/{id}", userRouter.userController.GetUserByIdController)
 }
