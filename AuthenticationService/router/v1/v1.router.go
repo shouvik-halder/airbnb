@@ -1,16 +1,18 @@
 package v1
 
-import "github.com/go-chi/chi/v5"
+import (
+	routerhelper "AuthenticationService/router/helper"
 
-type Router interface {
-	Register(r chi.Router)
-}
+	"github.com/go-chi/chi/v5"
+)
+
+
 
 type V1Router struct {
-	routers []Router
+	routers []routerhelper.Router
 }
 
-func NewV1Router(routers ...Router) *V1Router {
+func NewV1Router(routers ...routerhelper.Router) *V1Router {
 	return &V1Router{
 		routers: routers,
 	}
