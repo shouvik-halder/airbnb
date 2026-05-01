@@ -6,8 +6,7 @@ import (
 	"AuthenticationService/controllers"
 	dbrepo "AuthenticationService/db/repositories"
 	"AuthenticationService/router"
-
-	// v1router "AuthenticationService/router/v1"
+	v1router "AuthenticationService/router/v1"
 	"AuthenticationService/services"
 	"fmt"
 	"log"
@@ -35,7 +34,7 @@ func (app *Application) Run() error {
 	ur := dbrepo.NewUserRepository(dbconfig.GetDB())
 	us := services.NewUserService(ur, app.Config.Auth.TokenSecret)
 	uc := controllers.NewUserController(us)
-	uRouter := router.NewUserRouter(uc)
+	uRouter := v1router.NewUserRouter(uc)
 	server := &http.Server{
 		Addr:         app.Config.Server.PORT,
 		Handler:      router.InitializeRouter(uRouter),
