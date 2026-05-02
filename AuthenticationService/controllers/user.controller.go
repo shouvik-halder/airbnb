@@ -57,20 +57,10 @@ func (uc *UserController) RegisterController(w http.ResponseWriter, r *http.Requ
 }
 
 func (uc *UserController) LoginController(w http.ResponseWriter, r *http.Request) {
-	var payload model.AuthRequest
-	if err := utils.ReadJSON(r, &payload); err != nil {
-		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
-		return
-	}
 
-	if jsonErr := utils.Validator.Struct(payload); jsonErr != nil {
-		validationErrors, ok := jsonErr.(validator.ValidationErrors)
-		if !ok {
-			utils.WriteError(w, http.StatusBadRequest, jsonErr.Error())
-			return
-		}
-
-		utils.WriteError(w, http.StatusBadRequest, validationErrors.Error())
+	payload, ok:= utils.GetPayLoad[model.AuthRequest](r)
+	if !ok{
+		utils.WriteError(w, http.StatusUnprocessableEntity, "invalid json")
 		return
 	}
 

@@ -10,7 +10,9 @@ import (
 
 var Validator *validator.Validate
 
+type contextKey string
 
+var ValidatorContextKey contextKey = "ValidationPayload"
 
 func init() {
 	Validator = newValidator()
@@ -19,7 +21,6 @@ func init() {
 func newValidator() *validator.Validate {
 	return validator.New(validator.WithRequiredStructEnabled())
 }
-
 
 func WriteJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
@@ -35,4 +36,9 @@ func ReadJSON(r *http.Request, result any) error {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	return decoder.Decode(result)
+}
+
+func GetPayLoad[T any](r *http.Request) (*T, bool) {
+	payload, ok := r.Context().Value(ValidatorContextKey).(*T)
+	return payload, ok
 }
