@@ -147,8 +147,6 @@ func (userService *userServiceImpl) generateToken(user *model.User) (string, err
 	return token.SignedString([]byte(userService.tokenSecret))
 }
 
-
-
 func NewUserService(_userRepository db.UserRepository, tokenSecret string) UserService {
 	return &userServiceImpl{
 		userRepository: _userRepository,

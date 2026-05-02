@@ -8,9 +8,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"strings"
-
 )
-
 
 func HashPassword(password string) (string, error) {
 
@@ -59,5 +57,3 @@ func VerifyPassword(password, storedHash string) (bool, error) {
 
 	return subtle.ConstantTimeCompare(actualKey, expectedKey) == 1, nil
 }
-
-
