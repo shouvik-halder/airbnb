@@ -4,6 +4,7 @@ import (
 	"AuthenticationService/services"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -110,6 +111,19 @@ func (uc *UserController) DeleteUserByIdController(w http.ResponseWriter, r *htt
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (uc *UserController) GetAllUsersController(w http.ResponseWriter, r *http.Request) {
+	users, err := uc.userService.GetAllUsersService()
+	if err != nil {
+		if errors.Is(err, services.ErrUserNotFound) {
+			writeError(w, http.StatusNotFound, err.Error())
+			return
+		}
+		writeError(w, http.StatusInternalServerError, "failed to fetch all users")
+	}
+
+	writeJSON(w, http.StatusOK, users)
 }
 
 func writeJSON(w http.ResponseWriter, status int, data any) {

@@ -3,17 +3,18 @@ package services
 import (
 	db "AuthenticationService/db/repositories"
 	"AuthenticationService/model"
-	"crypto/hmac"
 	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var (
@@ -29,6 +30,7 @@ type UserService interface {
 	Login(email, password string) (*AuthResponse, error)
 	GetUserByIdService(id int64) (*model.User, error)
 	DeleteUserByIdService(id int64) (bool, error)
+	GetAllUsersService() ([]*model.User, error)
 }
 
 type AuthResponse struct {
@@ -101,8 +103,19 @@ func (userService *userServiceImpl) GetUserByIdService(id int64) (*model.User, e
 	return user, nil
 }
 
+func (userservice *userServiceImpl) GetAllUsersService() ([]*model.User, error) {
+	users, err := userservice.userRepository.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+	if db.IsNotFound(err) {
+		return nil, ErrUserNotFound
+	}
+	return users, nil
+}
+
 func (userService *userServiceImpl) DeleteUserByIdService(id int64) (bool, error) {
-	isDeleted, err := userService.userRepository.Delete(id)
+	isDeleted, err := userService.userRepository.DeleteById(id)
 	if err != nil {
 		return false, err
 	}
@@ -127,41 +140,20 @@ func (userService *userServiceImpl) buildAuthResponse(user *model.User) (*AuthRe
 }
 
 func (userService *userServiceImpl) generateToken(user *model.User) (string, error) {
-	if strings.TrimSpace(userService.tokenSecret) == "" {
-		return "", ErrTokenSecretRequired
+
+	claims := jwt.RegisteredClaims{
+		Subject:   strconv.FormatInt(user.Id, 10),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Minute)),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		Issuer:    "Airbnb-Authentication-Service",
 	}
 
-	now := time.Now()
-	header := map[string]string{
-		"alg": "HS256",
-		"typ": "JWT",
-	}
-	payload := map[string]any{
-		"sub":   user.Id,
-		"email": user.Email,
-		"exp":   now.Add(24 * time.Hour).Unix(),
-		"iat":   now.Unix(),
-	}
-
-	headerJSON, err := json.Marshal(header)
-	if err != nil {
-		return "", err
-	}
-
-	payloadJSON, err := json.Marshal(payload)
-	if err != nil {
-		return "", err
-	}
-
-	unsignedToken := fmt.Sprintf("%s.%s", base64.RawURLEncoding.EncodeToString(headerJSON), base64.RawURLEncoding.EncodeToString(payloadJSON))
-	mac := hmac.New(sha256.New, []byte(userService.tokenSecret))
-	mac.Write([]byte(unsignedToken))
-	signature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
-
-	return fmt.Sprintf("%s.%s", unsignedToken, signature), nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(userService.tokenSecret))
 }
 
 func hashPassword(password string) (string, error) {
+
 	salt := make([]byte, 16)
 	if _, err := rand.Read(salt); err != nil {
 		return "", err
