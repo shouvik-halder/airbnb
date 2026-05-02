@@ -4,7 +4,6 @@ import (
 	"AuthenticationService/services"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
