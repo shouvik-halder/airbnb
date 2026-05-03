@@ -1,15 +1,12 @@
 package middlewares
 
 import (
+	"AuthenticationService/constants"
 	"context"
 	"net/http"
 
 	"github.com/google/uuid"
 )
-
-type contextKey string
-
-const CorrelationIDKey contextKey = "correlation_id"
 
 func CorrelationId(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +16,7 @@ func CorrelationId(next http.Handler) http.Handler {
 			correlationID = uuid.New().String()
 		}
 
-		ctx := context.WithValue(r.Context(), CorrelationIDKey, correlationID)
+		ctx := context.WithValue(r.Context(), constants.CorrelationIDKey, correlationID)
 
 		w.Header().Set("X-Correlation-Id", correlationID)
 

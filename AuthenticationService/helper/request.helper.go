@@ -1,13 +1,13 @@
 package helper
 
 import (
-	"AuthenticationService/middlewares"
+	"AuthenticationService/constants"
 	"AuthenticationService/utils"
 	"context"
 )
 
 func GetCorrelationID(ctx context.Context) string {
-	if id, ok := ctx.Value(middlewares.CorrelationIDKey).(string); ok {
+	if id, ok := ctx.Value(constants.CorrelationIDKey).(string); ok {
 		return id
 	}
 	return "no-correlation-id"

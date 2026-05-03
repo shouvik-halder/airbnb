@@ -1,6 +1,7 @@
 package services
 
 import (
+	"AuthenticationService/config"
 	db "AuthenticationService/db/repositories"
 	"AuthenticationService/model"
 	"AuthenticationService/utils"
@@ -142,9 +143,9 @@ func (userService *userServiceImpl) generateToken(user *model.User) (string, err
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		Issuer:    "Airbnb-Authentication-Service",
 	}
-
+	tokenSecret := config.GetConfig().Auth.TokenSecret
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(userService.tokenSecret))
+	return token.SignedString([]byte(tokenSecret))
 }
 
 func NewUserService(_userRepository db.UserRepository, tokenSecret string) UserService {

@@ -2,13 +2,14 @@ package middlewares
 
 import (
 	"AuthenticationService/config/logger"
+	"AuthenticationService/constants"
 	"context"
 	"net/http"
 
 	"github.com/google/uuid"
 )
 
-const LoggerKey contextKey = "logger"
+
 
 func Logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +23,7 @@ func Logger(next http.Handler) http.Handler {
 			Str("correlation-id", cid).
 			Logger()
 
-		ctx := context.WithValue(r.Context(), LoggerKey, &reqLogger)
+		ctx := context.WithValue(r.Context(), constants.LoggerKey, &reqLogger)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
