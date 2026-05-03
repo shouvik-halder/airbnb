@@ -2,14 +2,15 @@ package controllers
 
 import (
 	"AuthenticationService/dtos"
+	"AuthenticationService/helper"
 	"AuthenticationService/services"
 	"AuthenticationService/utils"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
 )
 
 type UserController struct {
@@ -23,20 +24,10 @@ func NewUserController(_userService services.UserService) *UserController {
 }
 
 func (uc *UserController) RegisterController(w http.ResponseWriter, r *http.Request) {
-	var payload dtos.RegisterRequestDTO
-	if err := utils.ReadJSON(r, &payload); err != nil {
-		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
-		return
-	}
 
-	if jsonErr := utils.Validator.Struct(payload); jsonErr != nil {
-		validationErrors, ok := jsonErr.(validator.ValidationErrors)
-		if !ok {
-			utils.WriteError(w, http.StatusBadRequest, jsonErr.Error())
-			return
-		}
-
-		utils.WriteError(w, http.StatusBadRequest, validationErrors.Error())
+	payload, ok := helper.GetPayLoad[dtos.RegisterRequestDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusUnprocessableEntity, "invalid json")
 		return
 	}
 
@@ -58,8 +49,8 @@ func (uc *UserController) RegisterController(w http.ResponseWriter, r *http.Requ
 
 func (uc *UserController) LoginController(w http.ResponseWriter, r *http.Request) {
 
-	payload, ok:= utils.GetPayLoad[dtos.LoginRequestDTO](r)
-	if !ok{
+	payload, ok := helper.GetPayLoad[dtos.LoginRequestDTO](r.Context())
+	if !ok {
 		utils.WriteError(w, http.StatusUnprocessableEntity, "invalid json")
 		return
 	}
@@ -118,9 +109,13 @@ func (uc *UserController) DeleteUserByIdController(w http.ResponseWriter, r *htt
 }
 
 func (uc *UserController) GetAllUsersController(w http.ResponseWriter, r *http.Request) {
+	log := helper.LoggerFromContext(r.Context())
+
+	log.Info().Msg("getting all users")
 	users, err := uc.userService.GetAllUsersService()
 	if err != nil {
 		if errors.Is(err, services.ErrUserNotFound) {
+			log.Info().Msg(fmt.Sprintf("error while fetching all active users %s", err.Error()))
 			utils.WriteError(w, http.StatusNotFound, err.Error())
 			return
 		}

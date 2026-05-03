@@ -11,8 +11,9 @@ import (
 
 func InitializeRouter(router ...routerhelper.Router) *chi.Mux {
 	chiRouter := chi.NewRouter()
-
+	chiRouter.Use(middlewares.RateLimit)
 	chiRouter.Use(middlewares.CorrelationId)
+	chiRouter.Use(middlewares.Logger)
 	chiRouter.Get("/ping", controllers.PingController)
 
 	v1Router := v1.NewV1Router(router...)

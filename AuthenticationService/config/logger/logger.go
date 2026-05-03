@@ -24,6 +24,7 @@ func InitLogger(cfg *config.Config) *zerolog.Logger {
 	logger := zerolog.New(mw).With().
 		Timestamp().
 		Logger()
+
 	Log = &logger
 	return Log
 }

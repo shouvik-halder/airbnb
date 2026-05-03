@@ -38,7 +38,4 @@ func ReadJSON(r *http.Request, result any) error {
 	return decoder.Decode(result)
 }
 
-func GetPayLoad[T any](r *http.Request) (*T, bool) {
-	payload, ok := r.Context().Value(ValidatorContextKey).(*T)
-	return payload, ok
-}
+
