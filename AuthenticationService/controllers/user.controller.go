@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"AuthenticationService/model"
+	"AuthenticationService/dtos"
 	"AuthenticationService/services"
 	"AuthenticationService/utils"
 	"errors"
@@ -23,7 +23,7 @@ func NewUserController(_userService services.UserService) *UserController {
 }
 
 func (uc *UserController) RegisterController(w http.ResponseWriter, r *http.Request) {
-	var payload model.AuthRequest
+	var payload dtos.RegisterRequestDTO
 	if err := utils.ReadJSON(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
 		return
@@ -58,7 +58,7 @@ func (uc *UserController) RegisterController(w http.ResponseWriter, r *http.Requ
 
 func (uc *UserController) LoginController(w http.ResponseWriter, r *http.Request) {
 
-	payload, ok:= utils.GetPayLoad[model.AuthRequest](r)
+	payload, ok:= utils.GetPayLoad[dtos.LoginRequestDTO](r)
 	if !ok{
 		utils.WriteError(w, http.StatusUnprocessableEntity, "invalid json")
 		return

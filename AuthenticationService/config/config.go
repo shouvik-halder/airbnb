@@ -20,14 +20,23 @@ type authConfig struct {
 	TokenSecret string
 }
 
+type loggerConfig struct {
+	MAXSIZEMB      int
+	MAXBACKUPCOUNT int
+	MAXAGEDAYS     int
+}
+
 type Config struct {
 	Server serverConfig
 	DB     dbConfig
 	Auth   authConfig
+	Logger loggerConfig
 }
 
+var AppConfig *Config
+
 func Load() *Config {
-	return &Config{
+	AppConfig = &Config{
 		Server: serverConfig{
 			PORT: env.GetString("PORT", ":8080"),
 		},
@@ -41,5 +50,15 @@ func Load() *Config {
 		Auth: authConfig{
 			TokenSecret: env.GetString("AUTH_TOKEN_SECRET", "dev-auth-token-secret-change-me"),
 		},
+		Logger: loggerConfig{
+			MAXSIZEMB:      env.GetInt("MAXSIZEMB", 20),
+			MAXAGEDAYS:     env.GetInt("MAXAGEDAYS", 14),
+			MAXBACKUPCOUNT: env.GetInt("MAXBACKUPCOUNT", 2),
+		},
 	}
+	return AppConfig
+}
+
+func GetConfig() *Config {
+	return AppConfig
 }

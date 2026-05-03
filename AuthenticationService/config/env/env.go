@@ -3,6 +3,7 @@ package env
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,20 @@ func GetString(key, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func GetInt(key string, defaultVal int) int {
+	valStr := GetString(key, "")
+	if valStr == "" {
+		return defaultVal
+	}
+
+	val, err := strconv.Atoi(valStr)
+	if err != nil {
+		return defaultVal
+	}
+
+	return val
 }
 
 func loadEnv() {

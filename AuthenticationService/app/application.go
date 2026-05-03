@@ -3,6 +3,7 @@ package app
 import (
 	"AuthenticationService/config"
 	dbconfig "AuthenticationService/config/db"
+	"AuthenticationService/config/logger"
 	"AuthenticationService/controllers"
 	dbrepo "AuthenticationService/db/repositories"
 	"AuthenticationService/router"
@@ -24,6 +25,7 @@ func NewApplication() *Application {
 	if err := dbconfig.SetupDB(cfg); err != nil {
 		log.Fatal(err)
 	}
+	logger.InitLogger(cfg)
 	return &Application{
 		Config: cfg,
 		Store:  dbrepo.InitStorage(),
@@ -43,6 +45,7 @@ func (app *Application) Run() error {
 	}
 
 	fmt.Println("Starting server on Port ", server.Addr)
+	logger.Log.Info().Msg(fmt.Sprintf("Starting server on Port %s", server.Addr))
 
 	return server.ListenAndServe()
 }
