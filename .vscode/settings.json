@@ -44,6 +44,21 @@
             "database": "authenticationservicedb",
             "username": "user",
             "askForPassword": true
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3309,
+            "driver": "MySQL",
+            "name": "review-service-mysql-container",
+            "database": "reviewservicedb",
+            "username": "user",
+            "askForPassword": true
         }
     ]
 }
