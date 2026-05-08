@@ -9,7 +9,9 @@ import (
 
 func InitializeRouters(router routerHelper.Router) *chi.Mux {
 	chiRouter := chi.NewRouter()
+
 	v1Router := v1.NewV1Router(router)
+
 	chiRouter.Route("/api", func(r chi.Router) {
 		v1Router.Register(r)
 	})

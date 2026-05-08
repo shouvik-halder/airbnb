@@ -2,29 +2,41 @@ package app
 
 import (
 	"ReviewService/config"
+	dbConfig "ReviewService/config/db"
+	"ReviewService/controllers"
+	"ReviewService/db"
 	"ReviewService/routers"
 	v1 "ReviewService/routers/v1"
+	"ReviewService/services"
 	"fmt"
 	"net/http"
 	"time"
 )
 
 type Application struct {
-	cfg *config.Config
+	Cfg   *config.Config
+	Store *db.Storage
 }
 
 func NewApplication() *Application {
 	cfg := config.Load()
+	if err := dbConfig.SetupDB(cfg); err != nil {
+		fmt.Println("Error Setting up db", err)
+	}
+	
 	return &Application{
-		cfg: cfg,
+		Cfg: cfg,
+		Store: db.InitStorage(),
 	}
 }
 
 func (app *Application) Run() error {
-
-	reviewRouter := v1.NewReviewRouter()
+	reviewRepo := app.Store.ReviewRepository
+	reviewService := services.NewReviewService(reviewRepo);
+	reviewController := controllers.NewReviewController(reviewService)
+	reviewRouter := v1.NewReviewRouter(reviewController)
 	server := &http.Server{
-		Addr:         app.cfg.Server.PORT,
+		Addr:         app.Cfg.Server.PORT,
 		Handler:      routers.InitializeRouters(reviewRouter),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
