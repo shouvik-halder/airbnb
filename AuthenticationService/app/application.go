@@ -37,9 +37,14 @@ func (app *Application) Run() error {
 	us := services.NewUserService(ur, app.Config.Auth.TokenSecret)
 	uc := controllers.NewUserController(us)
 	uRouter := v1router.NewUserRouter(uc)
+
+	rr := dbrepo.NewRolesRepository(dbconfig.GetDB())
+	rs := services.NewRolesService(rr)
+	rc := controllers.NewRoleController(rs)
+	rRouter := v1router.NewRolesRouter(rc)
 	server := &http.Server{
 		Addr:         app.Config.Server.PORT,
-		Handler:      router.InitializeRouter(uRouter),
+		Handler:      router.InitializeRouter(uRouter, rRouter),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

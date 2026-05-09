@@ -11,3 +11,39 @@ type CreatePermissionDTO struct {
 	Resource    string `json:"resource" validate:"required"`
 	Action      string `json:"action" validate:"required"`
 }
+
+type GetRoleByIdDTO struct {
+	Id int64 `json:"id" validate:"required"`
+}
+
+type GetRoleByNameDTO struct {
+	Name string `json:"name" validate:"required"`
+}
+
+type GetPermissionByIdDTO struct {
+	Id int64 `json:"id" validate:"required"`
+}
+
+type GetPermissionByNameDTO struct {
+	Name string `json:"name" validate:"required"`
+}
+
+type AssignRoleToUserDTO struct {
+	UserId int64 `json:"userId" validate:"required"`
+	RoleId int64 `json:"roleId" validate:"required"`
+}
+
+type RemoveRoleFromUserDTO struct {
+	UserId int64 `json:"userId" validate:"required"`
+	RoleId int64 `json:"roleId" validate:"required"`
+}
+
+type CheckUserPermissionDTO struct {
+	UserId         int64  `json:"userId" validate:"required"`
+	PermissionName string `json:"permissionName" validate:"required"`
+}
+
+type CheckUserRoleDTO struct {
+	UserId   int64  `json:"userId" validate:"required"`
+	RoleName string `json:"roleName" validate:"required"`
+}
