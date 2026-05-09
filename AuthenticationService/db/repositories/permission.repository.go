@@ -17,17 +17,17 @@ type PermissionRepository interface {
 	) (*model.Permission, error)
 }
 
-type PermissionRepositoryImpl struct {
+type permissionRepositoryImpl struct {
 	sqlDB *sql.DB
 }
 
 func NewPermissionRepository(_sqlDB *sql.DB) PermissionRepository {
-	return &PermissionRepositoryImpl{
+	return &permissionRepositoryImpl{
 		sqlDB: _sqlDB,
 	}
 }
 
-func (r *PermissionRepositoryImpl) GetPermissionByID(id int64) (*model.Permission, error) {
+func (r *permissionRepositoryImpl) GetPermissionByID(id int64) (*model.Permission, error) {
 
 	query := `
 		SELECT 
@@ -64,7 +64,7 @@ func (r *PermissionRepositoryImpl) GetPermissionByID(id int64) (*model.Permissio
 	return permission, nil
 }
 
-func (r *PermissionRepositoryImpl) GetPermissionByName(name string) (*model.Permission, error) {
+func (r *permissionRepositoryImpl) GetPermissionByName(name string) (*model.Permission, error) {
 
 	query := `
 		SELECT 
@@ -101,7 +101,7 @@ func (r *PermissionRepositoryImpl) GetPermissionByName(name string) (*model.Perm
 	return permission, nil
 }
 
-func (r *PermissionRepositoryImpl) GetAllPermissions() ([]*model.Permission, error) {
+func (r *permissionRepositoryImpl) GetAllPermissions() ([]*model.Permission, error) {
 
 	query := `
 		SELECT 
@@ -152,7 +152,7 @@ func (r *PermissionRepositoryImpl) GetAllPermissions() ([]*model.Permission, err
 	return permissions, nil
 }
 
-func (r *PermissionRepositoryImpl) CreatePermission(
+func (r *permissionRepositoryImpl) CreatePermission(
 	name string,
 	description string,
 	resource string,
