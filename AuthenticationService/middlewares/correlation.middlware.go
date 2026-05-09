@@ -10,7 +10,7 @@ import (
 
 func CorrelationId(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		correlationID := r.Header.Get("X-Correlation-ID")
+		correlationID := r.Header.Get("X-Correlation-Id")
 
 		if correlationID == "" {
 			correlationID = uuid.New().String()
