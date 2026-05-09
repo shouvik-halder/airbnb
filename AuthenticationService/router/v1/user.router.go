@@ -21,7 +21,7 @@ func NewUserRouter(_userController *controllers.UserController) *UserRouter {
 
 func (userRouter *UserRouter) Register(r chi.Router) {
 	r.Route("/user", func(r chi.Router) {
-		r.With(validators.Validate[dtos.LoginRequestDTO]()).Post("/register", userRouter.userController.RegisterController)
+		r.With(validators.Validate[dtos.RegisterRequestDTO]()).Post("/register", userRouter.userController.RegisterController)
 		r.With(validators.Validate[dtos.LoginRequestDTO]()).Post("/login", userRouter.userController.LoginController)
 		r.With(middlewares.JWTAuthenticate).Get("/{id}", userRouter.userController.GetUserByIdController)
 		r.With(middlewares.JWTAuthenticate).Delete("/{id}", userRouter.userController.DeleteUserByIdController)
