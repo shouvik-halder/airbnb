@@ -32,10 +32,9 @@ func WriteError(w http.ResponseWriter, status int, message string) {
 	WriteJSON(w, status, model.ErrorResponse{Message: message})
 }
 
-func ReadJSON(r *http.Request, result any) error {
+func ReadJSONBody(r *http.Request, result any) error {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	return decoder.Decode(result)
 }
-
 

@@ -3,6 +3,7 @@ package controllers
 import (
 	"AuthenticationService/dtos"
 	"AuthenticationService/helper"
+	"AuthenticationService/model"
 	"AuthenticationService/services"
 	"AuthenticationService/utils"
 	"net/http"
@@ -19,7 +20,6 @@ func NewRoleController(roleService services.RolesService) *RoleController {
 }
 
 func (rc *RoleController) GetRoleByIdController(w http.ResponseWriter, r *http.Request) {
-
 	payload, ok := helper.GetPayLoad[dtos.GetRoleByIdDTO](r.Context())
 	if !ok {
 		utils.WriteError(w, http.StatusBadRequest, "issue with payload")
@@ -34,30 +34,7 @@ func (rc *RoleController) GetRoleByIdController(w http.ResponseWriter, r *http.R
 
 	utils.WriteJSON(w, http.StatusOK, result)
 }
-func (rc *RoleController) GetRoleByNameController(w http.ResponseWriter, r *http.Request) {
-	payload, ok := helper.GetPayLoad[dtos.GetRoleByNameDTO](r.Context())
-	if !ok {
-		utils.WriteError(w, http.StatusBadRequest, "issue with payload")
-		return
-	}
 
-	result, err := rc.roleService.GetRoleByNameService(payload.Name)
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	utils.WriteJSON(w, http.StatusOK, result)
-}
-func (rc *RoleController) GetAllRolesController(w http.ResponseWriter, r *http.Request) {
-	result, err := rc.roleService.GetAllRolesService()
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	utils.WriteJSON(w, http.StatusOK, result)
-}
 func (rc *RoleController) CreateRoleService(w http.ResponseWriter, r *http.Request) {
 	payload, ok := helper.GetPayLoad[dtos.CreateRoleDTO](r.Context())
 	if !ok {
@@ -72,4 +49,35 @@ func (rc *RoleController) CreateRoleService(w http.ResponseWriter, r *http.Reque
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, response)
+}
+
+func (rc *RoleController) GetRolesController(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	// Filter by name
+	if name != "" {
+		result, err := rc.roleService.GetRoleByNameService(name)
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		if result == nil {
+			utils.WriteJSON(w, http.StatusNoContent, []*model.Role{})
+		}
+
+		utils.WriteJSON(w, http.StatusOK, result)
+		return
+	}
+
+	// Get all roles
+	result, err := rc.roleService.GetAllRolesService()
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if len(result) == 0 {
+		utils.WriteJSON(w, http.StatusNoContent, []*model.Role{})
+	}
+
+	utils.WriteJSON(w, http.StatusOK, result)
 }

@@ -2,6 +2,9 @@ package v1
 
 import (
 	"AuthenticationService/controllers"
+	"AuthenticationService/dtos"
+	"AuthenticationService/validators"
+
 	// "AuthenticationService/dtos"
 	// "AuthenticationService/validators"
 
@@ -20,12 +23,10 @@ func NewRolesRouter(_rolesController *controllers.RoleController) *RolesRouter {
 
 func (rolesRouter *RolesRouter) Register(r chi.Router) {
 	r.Route("/roles", func(r chi.Router) {
-		r.Get("/", rolesRouter.rolesController.GetAllRolesController);
-		// r.With(validators.Validate[dtos.RegisterRequestDTO]()).Post("/register", userRouter.userController.RegisterController)
-		// r.With(validators.Validate[dtos.LoginRequestDTO]()).Post("/login", userRouter.userController.LoginController)
-		// r.With(middlewares.JWTAuthenticate).Get("/{id}", userRouter.userController.GetUserByIdController)
-		// r.With(middlewares.JWTAuthenticate).Delete("/{id}", userRouter.userController.DeleteUserByIdController)
-		// r.With(middlewares.JWTAuthenticate).Get("/", userRouter.userController.GetAllUsersController)
-	})
+		r.Get("/", rolesRouter.rolesController.GetRolesController)
+		r.Get("/{id}", rolesRouter.rolesController.GetRoleByIdController)
 
+		r.With(validators.Validate[dtos.CreateRoleDTO]()).
+			Post("/", rolesRouter.rolesController.CreateRoleService)
+	})
 }

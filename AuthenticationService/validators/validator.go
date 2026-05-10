@@ -12,7 +12,7 @@ func Validate[T any]() func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var payload T
 
-			if err := utils.ReadJSON(r, &payload); err != nil {
+			if err := utils.ReadJSONBody(r, &payload); err != nil {
 				utils.WriteError(w, http.StatusBadRequest, fmt.Sprintf("Validation error %s", err.Error()))
 				return
 			}
