@@ -20,7 +20,7 @@ func NewRoleController(roleService services.RolesService) *RoleController {
 }
 
 func (rc *RoleController) GetRoleByIdController(w http.ResponseWriter, r *http.Request) {
-	payload, ok := helper.GetPayLoad[dtos.GetRoleByIdDTO](r.Context())
+	payload, ok := helper.GetParams[dtos.GetRoleByIdDTO](r.Context())
 	if !ok {
 		utils.WriteError(w, http.StatusBadRequest, "issue with payload")
 		return

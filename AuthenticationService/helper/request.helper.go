@@ -17,3 +17,8 @@ func GetPayLoad[T any](ctx context.Context) (*T, bool) {
 	payload, ok := ctx.Value(utils.ValidatorContextKey).(*T)
 	return payload, ok
 }
+
+func GetParams[T any](ctx context.Context) (*T, bool) {
+	payload, ok := ctx.Value(utils.ParamsContextKey).(*T)
+	return payload, ok
+}

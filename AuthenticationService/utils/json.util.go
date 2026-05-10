@@ -13,6 +13,7 @@ var Validator *validator.Validate
 type contextKey string
 
 var ValidatorContextKey contextKey = "ValidationPayload"
+var ParamsContextKey contextKey = "ParamsPayload"
 
 func init() {
 	Validator = newValidator()
@@ -37,4 +38,3 @@ func ReadJSONBody(r *http.Request, result any) error {
 	decoder.DisallowUnknownFields()
 	return decoder.Decode(result)
 }
-
