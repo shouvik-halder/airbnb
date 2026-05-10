@@ -15,6 +15,8 @@ type PermissionRepository interface {
 		resource string,
 		action string,
 	) (*model.Permission, error)
+	UpdatePermission(id int64, name, description, resource, action *string) (*model.Permission, error)
+	DeletePermission(id int64) (bool, error)
 }
 
 type permissionRepositoryImpl struct {
@@ -58,6 +60,9 @@ func (r *permissionRepositoryImpl) GetPermissionByID(id int64) (*model.Permissio
 	)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -95,6 +100,9 @@ func (r *permissionRepositoryImpl) GetPermissionByName(name string) (*model.Perm
 	)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -187,4 +195,61 @@ func (r *permissionRepositoryImpl) CreatePermission(
 	}
 
 	return r.GetPermissionByID(insertedID)
+}
+
+func (r *permissionRepositoryImpl) UpdatePermission(
+	id int64,
+	name *string,
+	description *string,
+	resource *string,
+	action *string,
+) (*model.Permission, error) {
+	query := `
+		UPDATE permissions
+		SET
+			name = COALESCE(?, name),
+			description = COALESCE(?, description),
+			resource = COALESCE(?, resource),
+			action = COALESCE(?, action)
+		WHERE id = ?
+		AND deleted_at IS NULL
+	`
+
+	result, err := r.sqlDB.Exec(query, name, description, resource, action, id)
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+	if rowsAffected == 0 {
+		permission, err := r.GetPermissionByID(id)
+		if err != nil {
+			return nil, err
+		}
+		if permission == nil {
+			return nil, sql.ErrNoRows
+		}
+		return permission, nil
+	}
+
+	return r.GetPermissionByID(id)
+}
+
+func (r *permissionRepositoryImpl) DeletePermission(id int64) (bool, error) {
+	query := `UPDATE permissions SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL`
+
+	result, err := r.sqlDB.Exec(query, id)
+	if err != nil {
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	return rowsAffected > 0, nil
 }

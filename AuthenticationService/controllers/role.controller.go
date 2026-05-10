@@ -6,6 +6,7 @@ import (
 	"AuthenticationService/model"
 	"AuthenticationService/services"
 	"AuthenticationService/utils"
+	"errors"
 	"net/http"
 )
 
@@ -29,6 +30,10 @@ func (rc *RoleController) GetRoleByIdController(w http.ResponseWriter, r *http.R
 	result, err := rc.roleService.GetRoleByIdService(payload.Id)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if result == nil {
+		utils.WriteError(w, http.StatusNotFound, "role not found")
 		return
 	}
 
@@ -62,7 +67,8 @@ func (rc *RoleController) GetRolesController(w http.ResponseWriter, r *http.Requ
 		}
 
 		if result == nil {
-			utils.WriteJSON(w, http.StatusNoContent, []*model.Role{})
+			utils.WriteJSON(w, http.StatusOK, []*model.Role{})
+			return
 		}
 
 		utils.WriteJSON(w, http.StatusOK, result)
@@ -76,8 +82,104 @@ func (rc *RoleController) GetRolesController(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	if len(result) == 0 {
-		utils.WriteJSON(w, http.StatusNoContent, []*model.Role{})
+		utils.WriteJSON(w, http.StatusOK, []*model.Role{})
+		return
 	}
 
 	utils.WriteJSON(w, http.StatusOK, result)
+}
+
+func (rc *RoleController) UpdateRoleController(w http.ResponseWriter, r *http.Request) {
+	params, ok := helper.GetParams[dtos.GetRoleByIdDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "issue with params")
+		return
+	}
+
+	payload, ok := helper.GetPayLoad[dtos.UpdateRoleDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "issue with payload")
+		return
+	}
+
+	response, err := rc.roleService.UpdateRoleService(params.Id, payload.Name, payload.Description)
+	if err != nil {
+		if errors.Is(err, services.ErrRoleNotFound) {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+			return
+		}
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, response)
+}
+
+func (rc *RoleController) DeleteRoleController(w http.ResponseWriter, r *http.Request) {
+	params, ok := helper.GetParams[dtos.GetRoleByIdDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "issue with params")
+		return
+	}
+
+	if err := rc.roleService.DeleteRoleService(params.Id); err != nil {
+		if errors.Is(err, services.ErrRoleNotFound) {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+			return
+		}
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (rc *RoleController) AssignPermissionToRoleController(w http.ResponseWriter, r *http.Request) {
+	payload, ok := helper.GetParams[dtos.RolePermissionDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "issue with params")
+		return
+	}
+
+	if err := rc.roleService.AssignPermissionToRoleService(payload.RoleId, payload.PermissionId); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusCreated, map[string]any{
+		"message":      "permission assigned to role",
+		"roleId":       payload.RoleId,
+		"permissionId": payload.PermissionId,
+	})
+}
+
+func (rc *RoleController) RemovePermissionFromRoleController(w http.ResponseWriter, r *http.Request) {
+	payload, ok := helper.GetParams[dtos.RolePermissionDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "issue with params")
+		return
+	}
+
+	if err := rc.roleService.RemovePermissionFromRoleService(payload.RoleId, payload.PermissionId); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (rc *RoleController) GetPermissionsByRoleController(w http.ResponseWriter, r *http.Request) {
+	payload, ok := helper.GetParams[dtos.RolePermissionsByRoleDTO](r.Context())
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "issue with params")
+		return
+	}
+
+	permissions, err := rc.roleService.GetPermissionsByRoleIDService(payload.RoleId)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, permissions)
 }

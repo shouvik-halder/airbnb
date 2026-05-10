@@ -17,8 +17,8 @@ type userRolesrepositoryImpl struct {
 	sqlDB *sql.DB
 }
 
-func NewUserRolesRepository(sqlDB *sql.DB) UserRepository {
-	return &UserRepositoryImpl{
+func NewUserRolesRepository(sqlDB *sql.DB) UserRolesRepository {
+	return &userRolesrepositoryImpl{
 		sqlDB: sqlDB,
 	}
 }
@@ -29,13 +29,14 @@ func (r *userRolesrepositoryImpl) GetUserRolesByUserID(userID int64) ([]*model.U
 		SELECT 
 			ur.id,
 			ur.user_id,
-			r.id,
-			created_at,
-			updated_at
+			ur.role_id,
+			ur.created_at,
+			ur.updated_at
 		FROM user_roles ur
 		JOIN roles r ON ur.role_id = r.id
-		WHERE user_id = ?
-		AND deleted_at IS NULL
+		WHERE ur.user_id = ?
+		AND ur.deleted_at IS NULL
+		AND r.deleted_at IS NULL
 	`
 
 	rows, err := r.sqlDB.Query(query, userID)
@@ -76,6 +77,7 @@ func (r *userRolesrepositoryImpl) AssignUserRole(userID int64, roleID int64) err
 	query := `
 		INSERT INTO user_roles (user_id, role_id, created_at, updated_at)
 		VALUES (?, ?, NOW(), NOW())
+		ON DUPLICATE KEY UPDATE deleted_at = NULL, updated_at = NOW()
 	`
 
 	_, err := r.sqlDB.Exec(query, userID, roleID)
@@ -112,7 +114,7 @@ func (r *userRolesrepositoryImpl) HasPermission(userID int64, permissionName str
 			FROM user_roles ur
 			JOIN roles r 
 				ON ur.role_id = r.id
-			JOIN role_permissions rp 
+			JOIN permission_role rp 
 				ON r.id = rp.role_id
 			JOIN permissions p 
 				ON rp.permission_id = p.id
@@ -148,7 +150,7 @@ func (r *userRolesrepositoryImpl) HasRole(userID int64, roleName string) (bool, 
 				AND r.deleted_at IS NULL
 		)
 	`
-	
+
 	var exists bool
 	err := r.sqlDB.QueryRow(query, userID, roleName).Scan(&exists)
 	if err != nil {

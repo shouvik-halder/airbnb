@@ -22,3 +22,8 @@ func GetParams[T any](ctx context.Context) (*T, bool) {
 	payload, ok := ctx.Value(utils.ParamsContextKey).(*T)
 	return payload, ok
 }
+
+func GetAuthenticatedUserID(ctx context.Context) (int64, bool) {
+	userID, ok := ctx.Value(constants.AuthenticatedUserIDKey).(int64)
+	return userID, ok
+}
