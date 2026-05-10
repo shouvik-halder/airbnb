@@ -1,4 +1,4 @@
-# Airbnb Clone — Microservices Backend
+# Airbnb/Booking.com Clone — Microservices Backend
 
 A production-oriented, microservices-based backend system inspired by Airbnb. Built with a polyglot architecture using **Go** and **Node.js (TypeScript)**, backed by **MySQL**, **Redis**, and **BullMQ**, designed around real-world engineering concerns like idempotency, distributed locking, RBAC, async messaging, and clean layered architecture.
 
