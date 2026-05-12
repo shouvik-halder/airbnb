@@ -2,8 +2,11 @@ package dbconfig
 
 import (
 	"AuthenticationService/config"
+	"AuthenticationService/config/logger"
 	"database/sql"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -33,6 +36,28 @@ func SetupDB(cfg *config.Config) error {
 	}
 
 	fmt.Println("DB Connected!")
+	return nil
+}
+
+func SeedDB() error {
+	content, err := os.ReadFile("db/seeder/seed_admin_user.sql")
+	if err != nil {
+		logger.Log.Error().Err(err).Msg("error reading seed file")
+		return err
+	}
+
+	for statement := range strings.SplitSeq(string(content), ";") {
+		statement = strings.TrimSpace(statement)
+
+		if statement == "" {
+			continue
+		}
+
+		if _, err := db.Exec(statement); err != nil {
+			return fmt.Errorf("failed to execute seed statement: %w", err)
+		}
+	}
+
 	return nil
 }
 

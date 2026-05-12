@@ -26,6 +26,9 @@ func NewApplication() *Application {
 		log.Fatal(err)
 	}
 	logger.InitLogger(cfg)
+	if err := dbconfig.SeedDB(); err != nil {
+		logger.Log.Error().Msg(err.Error())
+	}
 	return &Application{
 		Config: cfg,
 		Store:  dbrepo.InitStorage(),
