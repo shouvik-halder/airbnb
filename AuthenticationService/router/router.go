@@ -8,10 +8,12 @@ import (
 	"AuthenticationService/utils"
 
 	"github.com/go-chi/chi/v5"
+	chimiddleware "github.com/go-chi/chi/v5/middleware"
 )
 
 func InitializeRouter(router ...routerhelper.Router) *chi.Mux {
 	chiRouter := chi.NewRouter()
+	chiRouter.Use(chimiddleware.StripSlashes)
 	chiRouter.Use(middlewares.RateLimit)
 	chiRouter.Use(middlewares.CorrelationId)
 	chiRouter.Use(middlewares.Logger)

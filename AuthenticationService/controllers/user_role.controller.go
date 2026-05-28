@@ -20,6 +20,8 @@ func NewUserRoleController(userRolesService services.UserRolesService) *UserRole
 
 func (uc *UserRoleController) GetUserRolesController(w http.ResponseWriter, r *http.Request) {
 	payload, ok := helper.GetParams[dtos.UserRolesByUserDTO](r.Context())
+	logger := helper.LoggerFromContext(r.Context())
+	logger.Info().Msgf("payload in get user roles controller is %v", payload)
 	if !ok {
 		utils.WriteError(w, http.StatusBadRequest, "issue with params")
 		return

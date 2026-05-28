@@ -73,12 +73,15 @@ func JWTAuthenticate(next http.Handler) http.Handler {
 func RequirePermission(permissionName string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			logger := helper.LoggerFromContext(r.Context())
+			logger.Info().Msgf("payload in get user roles middleware is %s", permissionName)
 			userID, ok := helper.GetAuthenticatedUserID(r.Context())
 			if !ok {
+				logger.Info().Msgf("user id not found in context %d", userID)
 				utils.WriteError(w, http.StatusUnauthorized, "authenticated user not found")
 				return
 			}
-
+			logger.Info().Msgf("checking permission for user id %d", userID)
 			userRolesRepo := dbrepo.NewUserRolesRepository(dbconfig.GetDB())
 			hasPermission, err := userRolesRepo.HasPermission(userID, permissionName)
 			if err != nil {

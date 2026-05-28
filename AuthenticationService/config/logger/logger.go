@@ -17,7 +17,6 @@ var Log *zerolog.Logger
 func InitLogger(cfg *config.Config) *zerolog.Logger {
 	var writers []io.Writer
 
-	// writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr })
 	writers = append(writers, initRollingFileLogger(cfg))
 	mw := io.MultiWriter(writers...)
 
