@@ -21,6 +21,15 @@ class RoomTypeRepository extends BaseRepository<RoomType>{
         return roomTypes;
     }
 
+    async findActiveByHotelId(hotel_id:number): Promise<RoomType[]> {
+        return this.model.findAll({
+            where:{
+                hotel_id,
+                deletedAt:null
+            }
+        });
+    }
+
     async softDeleteByHotelId(id:number, hotel_id:number){
         const roomType = await this.model.findOne({
             where:{
@@ -40,4 +49,3 @@ class RoomTypeRepository extends BaseRepository<RoomType>{
 }
 
 export default RoomTypeRepository;
-

@@ -7,6 +7,7 @@ import logger from "./config/logger.config";
 import { attachCorrelationId } from "./middlewares/correlationid.middleware";
 import { sequelize } from "./db/models/sequelize";
 import { setupRoomGenerationWorker } from "./processors/roomsGeneration.worker";
+import { setupDailyRoomGenerationScheduler } from "./schedulers/dailyRoomGeneration.scheduler";
 
 const app = express();
 
@@ -26,4 +27,6 @@ app.listen(serverConfig.PORT, async()=>{
     logger.info('database connection has been established successfully');
     setupRoomGenerationWorker();
     logger.info('room generation worker has been started');
+    setupDailyRoomGenerationScheduler();
+    logger.info('daily room generation scheduler has been started');
 });

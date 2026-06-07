@@ -36,6 +36,18 @@ class RoomRepository extends BaseRepository<Room>{
         return await this.model.bulkCreate(rooms as any[]);
     }
 
+    async findLatestStatusDate(roomTypeId: number, hotelId: number): Promise<Date | null> {
+        const latestStatusDate = await this.model.max("statusDate", {
+            where: {
+                room_type_id: roomTypeId,
+                hotel_id: hotelId,
+                deletedAt: null
+            }
+        });
+
+        return latestStatusDate ? new Date(latestStatusDate as string | number | Date) : null;
+    }
+
     async findExistingRooms(
     roomTypeId: number,
     hotelId: number,

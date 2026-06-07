@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "async_hooks";
+import {v4 as uuidv4} from "uuid";
 
 type AsyncLocalStorageType = {
     correlationId: string;
@@ -8,7 +9,7 @@ export const asyncLocalStorage = new AsyncLocalStorage<AsyncLocalStorageType>();
 
 export const runWithCorrelationId = <T>(correlationId: string | undefined, callback: () => T) => {
     return asyncLocalStorage.run({
-        correlationId: correlationId || 'unknown-error-while-creating-correlation-id',
+        correlationId: correlationId || uuidv4(),
     }, callback);
 }
 
