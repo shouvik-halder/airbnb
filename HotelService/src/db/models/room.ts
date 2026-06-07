@@ -18,6 +18,7 @@ export class Room extends Model<
   declare floor:number;
   declare status:RoomStatus;
   declare statusDate: Date;
+  declare price: number;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -62,6 +63,10 @@ Room.init(
     statusDate:{
       type: "DATE",
       allowNull: false
+    },
+    price:{
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
     },
     createdAt:{
         type:"DATE",

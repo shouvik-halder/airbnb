@@ -13,6 +13,12 @@ type DBConfigType = {
   MYSQL_PASSWORD: string;
 };
 
+type RedisConfigType = {
+  REDIS_HOST: string;
+  REDIS_PORT: number;
+  REDIS_URL: string;
+};
+
 function getConfig() {
     dotenv.config();
 }
@@ -26,3 +32,9 @@ export const dbConfig:DBConfigType = {
   MYSQL_USER: process.env.MYSQL_DATABASE || 'user',
   MYSQL_PASSWORD: process.env.MYSQL_DATABASE || 'user123'
 }
+
+export const redisConfig: RedisConfigType = {
+    REDIS_HOST: process.env.REDIS_HOST ?? "",
+    REDIS_PORT: Number(process.env.REDIS_PORT) || 6381,
+    REDIS_URL: process.env.REDIS_URL ?? "",
+    };

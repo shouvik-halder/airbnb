@@ -6,6 +6,11 @@ type AsyncLocalStorageType = {
 
 export const asyncLocalStorage = new AsyncLocalStorage<AsyncLocalStorageType>(); // Created an instance of AsyncLocalStorage
 
+export const runWithCorrelationId = <T>(correlationId: string | undefined, callback: () => T) => {
+    return asyncLocalStorage.run({
+        correlationId: correlationId || 'unknown-error-while-creating-correlation-id',
+    }, callback);
+}
 
 export const getCorrelationId = () => {
     const asyncStore = asyncLocalStorage.getStore();

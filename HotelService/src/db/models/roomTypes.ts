@@ -7,7 +7,7 @@ import {
 } from "sequelize";
 import { sequelize } from "./sequelize";
 
-class RoomType extends Model<
+export class RoomType extends Model<
   InferAttributes<RoomType>,
   InferCreationAttributes<RoomType>
 > {
@@ -18,6 +18,7 @@ class RoomType extends Model<
   declare description: CreationOptional<string | null>;
   declare max_occupancy: number;
   declare room_count: number;
+  declare base_price: number;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -52,6 +53,13 @@ RoomType.init(
     },
     room_count:{
       type: DataTypes.INTEGER,
+    },
+    base_price:{
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0,
+      },
     },
     createdAt:{
         type:"DATE",

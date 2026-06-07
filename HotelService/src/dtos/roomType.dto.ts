@@ -4,4 +4,5 @@ export type CreateRoomTypeDTO = {
     description?:string;
     max_occupancy:number;
     room_count:number;
+    base_price:number;
 }

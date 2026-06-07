@@ -28,6 +28,6 @@ module.exports = {
 
   async down(queryInterface: QueryInterface) {
     await queryInterface.sequelize.query(`
-      DROP TABLE IF NOT EXISTS room_types`)
+      DROP TABLE IF EXISTS room_types`)
   },
 };

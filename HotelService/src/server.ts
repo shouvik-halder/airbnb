@@ -6,6 +6,7 @@ import { appErrorMiddleware, genericErrorMiddleware as genericErrorHandler } fro
 import logger from "./config/logger.config";
 import { attachCorrelationId } from "./middlewares/correlationid.middleware";
 import { sequelize } from "./db/models/sequelize";
+import { setupRoomGenerationWorker } from "./processors/roomsGeneration.worker";
 
 const app = express();
 
@@ -22,5 +23,7 @@ app.use(appErrorMiddleware);
 app.listen(serverConfig.PORT, async()=>{
     logger.info(`Server is running on port ${serverConfig.PORT}`);
     await sequelize.authenticate();
-    logger.info('dataqbase connection has been established successfully');
+    logger.info('database connection has been established successfully');
+    setupRoomGenerationWorker();
+    logger.info('room generation worker has been started');
 });
