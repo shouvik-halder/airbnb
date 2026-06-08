@@ -19,6 +19,12 @@ type RedisConfigType = {
   REDIS_URL: string;
 };
 
+
+type SchedulerConfigType = {
+  ROOM_GENERATION_CRON_TIMEZONE:string;
+  DAILY_ROOM_GENERATION_CRON:string;
+
+}
 function getConfig() {
     dotenv.config();
 }
@@ -38,3 +44,8 @@ export const redisConfig: RedisConfigType = {
     REDIS_PORT: Number(process.env.REDIS_PORT) || 6381,
     REDIS_URL: process.env.REDIS_URL ?? "",
     };
+
+export const schedulerConfig: SchedulerConfigType = {
+  ROOM_GENERATION_CRON_TIMEZONE: process.env.ROOM_GENERATION_CRON_TIMEZONE ?? "UTC",
+  DAILY_ROOM_GENERATION_CRON: process.env.DAILY_ROOM_GENERATION_CRON ?? "0 0 * * *",
+}

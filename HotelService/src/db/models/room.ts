@@ -13,13 +13,13 @@ export class Room extends Model<
 > {
   declare id: CreationOptional<number>;
   declare hotel_id: number;
-  declare room_type_id: number;   // or number if using room_type_id
+  declare room_type_id: number;   
   declare room_number: string;
   declare floor:number;
   declare status:RoomStatus;
   declare statusDate: Date;
   declare price: number;
-
+  declare booking_id: number | null;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date | null>;
@@ -27,6 +27,7 @@ export class Room extends Model<
 
 export enum RoomStatus{
     available = "available",
+    booked = "booked",
     occupied = "occupied",
     maintenance = "maintenance"
 }
@@ -67,6 +68,11 @@ Room.init(
     price:{
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+    },
+    booking_id:{
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue:null
     },
     createdAt:{
         type:"DATE",

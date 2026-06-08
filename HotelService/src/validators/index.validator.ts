@@ -47,6 +47,7 @@ const validate = (schema: ZodObject, source: "body" | "params" | "query") => {
         try {
             logger.info(`Validating request ${source}`);
             req[source] = await schema.parseAsync(req[source]);
+            logger.info(JSON.stringify(req[source]))
             next();
         } catch (error) {
             logger.error(`Invalid request ${source}`);

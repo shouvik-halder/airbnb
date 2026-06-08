@@ -22,6 +22,10 @@ type RedisServerConfigType = {
   REDIS_URL: string;
 };
 
+type ApiConfigType = {
+  HOTEL_SERVER_BASE_URL:string
+}
+
 function getConfig() {
   dotenv.config();
 }
@@ -43,4 +47,8 @@ export const redisConfig: RedisServerConfigType = {
     REDIS_HOST: process.env.REDIS_HOST ?? "",
     REDIS_PORT: Number(process.env.REDIS_PORT) || 6379,
     REDIS_URL: process.env.REDIS_URL ?? ""
+}
+
+export const apiConfig:ApiConfigType = {
+  HOTEL_SERVER_BASE_URL:process.env.HOTEL_SERVER_BASE_URL || "http://localhost:3002/api/v1"
 }

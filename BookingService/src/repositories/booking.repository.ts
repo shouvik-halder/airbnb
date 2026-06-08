@@ -5,8 +5,12 @@ import { BadRequestError } from "../utils/errors/app.error";
 
 export async function Createbooking(bookingData:Prisma.BookingCreateInput){
     const booking = await prisma.booking.create({
-        data:bookingData
-    });
+  data: {
+    ...bookingData,
+    checkInDate: new Date(bookingData.checkInDate),
+    checkOutDate: new Date(bookingData.checkOutDate),
+  }
+});
 
     return booking;
 }

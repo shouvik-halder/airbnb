@@ -13,6 +13,8 @@ model Booking {
   hotelId           Int
   roomTypeId        Int           
   bookingPrice      Float
+  checkInDate       DateTime
+  checkOutDate      DateTime
   bookingStatus     BookingStatus @default(PENDING)
   totalGuests       Int
   createdAt         DateTime      @default(now())

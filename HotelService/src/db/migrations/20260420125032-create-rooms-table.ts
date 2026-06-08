@@ -9,7 +9,7 @@ module.exports = {
 
     room_number     VARCHAR(20) NOT NULL,
     floor           INT,
-    status          ENUM('available', 'occupied', 'maintenance') NOT NULL DEFAULT 'available',
+    status          ENUM('available', 'booked', 'occupied', 'maintenance') NOT NULL DEFAULT 'available',
     status_date     DATE NOT NULL,
     price           DECIMAL(10, 2) NOT NULL,
     
